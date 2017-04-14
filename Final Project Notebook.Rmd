@@ -1,0 +1,74 @@
+---
+title: "IDS 575 final project"
+output: html_notebook
+---
+
+```{r}
+library(psych)
+library(plyr)
+library(dplyr)
+library(car)
+library(lubridate)
+library(zoo)
+library(xts) 
+library(forecast)
+library(tseries)
+
+
+load("hl_data.RData")
+str(ga.data)
+
+```
+
+
+```{r}
+ga.data$deviceCategory <- as.factor(ga.data$deviceCategory)
+levels(ga.data$deviceCategory)
+
+
+```
+
+
+```{r}
+ga.data$medium  <- as.factor(ga.data$medium)
+ga.data$week    <- as.numeric(ga.data$week)
+
+describe(ga.data)
+
+```
+
+```{r}
+gpSumCompletion <- ga.data %>% group_by(week,deviceCategory) %>% summarize(totalCompletions = sum(goal1Completions))
+
+desktop.data <- gpSumCompletion[gpSumCompletion$deviceCategory=="desktop",]
+desktop.ts <- ts(desktop.data$totalCompletions, start=c(2016,03),end = c(2017,03), frequency=53)
+plot(desktop.ts)
+```
+
+```{r}
+mobile.data <- gpSumCompletion[gpSumCompletion$deviceCategory=="mobile",]
+mobile.ts <- ts(mobile.data$totalCompletions, start=c(2016,03),end = c(2017,03), frequency=53)
+plot(mobile.ts)
+
+```
+
+```{r}
+tablet.data <- gpSumCompletion[gpSumCompletion$deviceCategory=="tablet",]
+tablet.ts <- ts(tablet.data$totalCompletions, start=c(2016,03),end = c(2017,03), frequency=53)
+plot(tablet.ts)
+
+```
+```{r}
+adf.test(desktop.ts)
+```
+
+
+```{r}
+adf.test(mobile.ts)
+```
+
+```{r}
+adf.test(tablet.ts)
+```
+
+
